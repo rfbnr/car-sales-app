@@ -71,9 +71,12 @@ class _LoginScreenViewState extends State<LoginScreenView> {
               ),
             ),
             const SpaceHeight(10.0),
-            const Text(
-              "Silahkan login untuk melakukan transaksi beli mobil impian anda",
-              textAlign: TextAlign.center,
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20.0),
+              child: Text(
+                "Silahkan login untuk melakukan transaksi beli mobil impian anda",
+                textAlign: TextAlign.center,
+              ),
             ),
             const SpaceHeight(40.0),
             Padding(
