@@ -7,3 +7,11 @@ extension IntegerExt on int {
         decimalDigits: 0,
       ).format(this);
 }
+
+String formatCurrencyRp(int value) {
+  return NumberFormat.currency(
+    locale: 'id',
+    symbol: 'Rp ',
+    decimalDigits: 0,
+  ).format(value);
+}

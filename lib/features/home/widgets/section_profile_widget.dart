@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import '../../../core/components/spaces.dart';
 import '../../../core/constants/colors.dart';
 import '../../auth/bloc/auth_bloc.dart';
+import '../../profile/screens/profile_screen.dart';
 
 class SectionProfileWidget extends StatelessWidget {
   const SectionProfileWidget({
@@ -83,14 +84,14 @@ class SectionProfileWidget extends StatelessWidget {
           ),
           InkWell(
             onTap: () {
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(
-              //     builder: (context) {
-              //       return const ProfileScreen();
-              //     },
-              //   ),
-              // );
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) {
+                    return const ProfileScreen();
+                  },
+                ),
+              );
             },
             child: CircleAvatar(
               radius: 38,

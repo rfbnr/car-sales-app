@@ -5,10 +5,12 @@ import 'package:equatable/equatable.dart';
 
 import '../../../data/datasources/auth_local_datasource.dart';
 import '../../../data/datasources/auth_remote_datasource.dart';
+import '../../../data/models/request/forgot_password_request_body_model.dart';
 import '../../../data/models/request/register_request_body_model.dart';
 import '../../../data/models/response/error_response_model.dart';
 import '../../../data/models/response/login_response_model.dart';
 import '../../../data/models/response/register_response_model.dart';
+import '../../../data/models/response/success_response_model.dart';
 
 part 'auth_event.dart';
 part 'auth_state.dart';
@@ -24,6 +26,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<VisibilityPassword>(_onVisibilityPassword);
     on<UserLogin>(_onUserLogin);
     on<UserRegister>(_onUserRegister);
+    on<UserForgotPassword>(_onUserForgotPassword);
     on<UserLogout>(_onUserLogout);
     on<GetUserLogin>(_onGetUserLogin);
 
@@ -79,9 +82,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
                 error: l,
               ),
             );
+            add(AuthSetInitial());
           },
           (r) {
-            print("data login: ${r.data!.toJson()}");
             authLocalDatasource.saveAuthData(r);
 
             emit(
@@ -90,6 +93,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
                 dataLogin: r,
               ),
             );
+            add(AuthSetInitial());
           },
         );
       } catch (e) {
@@ -102,6 +106,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             ),
           ),
         );
+        add(AuthSetInitial());
       }
     });
   }
@@ -133,6 +138,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
                 error: l,
               ),
             );
+            add(AuthSetInitial());
           },
           (r) {
             emit(
@@ -141,6 +147,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
                 dataRegister: r,
               ),
             );
+            add(AuthSetInitial());
           },
         );
       } catch (e) {
@@ -153,6 +160,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             ),
           ),
         );
+        add(AuthSetInitial());
       }
     });
   }
@@ -169,8 +177,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     try {
       final response = await authLocalDatasource.getAuthData();
-
-      print("data login: ${response.data!.toJson()}");
 
       emit(
         state.copyWith(
@@ -189,6 +195,60 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         ),
       );
     }
+  }
+
+  Future<void> _onUserForgotPassword(
+    UserForgotPassword event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(
+      state.copyWith(
+        status: AuthStatus.loading,
+      ),
+    );
+
+    await Future.delayed(
+        const Duration(
+          seconds: 1,
+        ), () async {
+      try {
+        final response = await authRemoteDatasource.forgotPassword(
+          body: event.body,
+        );
+
+        response.fold(
+          (l) {
+            emit(
+              state.copyWith(
+                status: AuthStatus.failure,
+                error: l,
+              ),
+            );
+            add(AuthSetInitial());
+          },
+          (r) {
+            emit(
+              state.copyWith(
+                status: AuthStatus.success,
+                success: r,
+              ),
+            );
+            add(AuthSetInitial());
+          },
+        );
+      } catch (e) {
+        emit(
+          state.copyWith(
+            status: AuthStatus.failure,
+            error: ErrorResponseModel(
+              status: 404,
+              message: e.toString(),
+            ),
+          ),
+        );
+        add(AuthSetInitial());
+      }
+    });
   }
 
   Future<void> _onUserLogout(

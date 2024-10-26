@@ -1,14 +1,5 @@
 part of 'auth_bloc.dart';
 
-// sealed class AuthState extends Equatable {
-//   const AuthState();
-
-//   @override
-//   List<Object> get props => [];
-// }
-
-// final class AuthInitial extends AuthState {}
-
 enum AuthStatus { initial, loading, success, failure }
 
 enum LogoutStatus { initial, loading, success, failure }
@@ -21,6 +12,7 @@ class AuthState extends Equatable {
   final bool? showPassword;
   final String? messageLogout;
   final ErrorResponseModel? error;
+  final SuccessResponseModel? success;
 
   const AuthState({
     this.status = AuthStatus.initial,
@@ -30,6 +22,7 @@ class AuthState extends Equatable {
     this.showPassword = true,
     this.messageLogout,
     this.error,
+    this.success,
   });
 
   AuthState copyWith({
@@ -40,6 +33,7 @@ class AuthState extends Equatable {
     bool? showPassword,
     String? messageLogout,
     ErrorResponseModel? error,
+    SuccessResponseModel? success,
   }) {
     return AuthState(
       status: status ?? this.status,
@@ -49,6 +43,7 @@ class AuthState extends Equatable {
       showPassword: showPassword ?? this.showPassword,
       messageLogout: messageLogout ?? this.messageLogout,
       error: error ?? this.error,
+      success: success ?? this.success,
     );
   }
 
@@ -61,5 +56,6 @@ class AuthState extends Equatable {
         showPassword,
         messageLogout,
         error,
+        success,
       ];
 }

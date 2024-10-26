@@ -10,6 +10,7 @@ import '../../../data/datasources/auth_local_datasource.dart';
 import '../../../data/datasources/auth_remote_datasource.dart';
 import '../../home/screens/home_screen.dart';
 import '../bloc/auth_bloc.dart';
+import 'forgot_password_screen.dart';
 import 'register_screen.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -71,7 +72,7 @@ class _LoginScreenViewState extends State<LoginScreenView> {
             ),
             const SpaceHeight(10.0),
             const Text(
-              "Silahkan login untuk melakukan transaksi beli mobil bekas anda.",
+              "Silahkan login untuk melakukan transaksi beli mobil impian anda",
               textAlign: TextAlign.center,
             ),
             const SpaceHeight(40.0),
@@ -92,7 +93,7 @@ class _LoginScreenViewState extends State<LoginScreenView> {
                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
                   child: CustomTextField(
                     controller: passwordController,
-                    label: "Password",
+                    label: "Kata Sandi",
                     obscureText: showPassword!,
                     suffixIcon: IconButton(
                       icon: Icon(
@@ -109,6 +110,29 @@ class _LoginScreenViewState extends State<LoginScreenView> {
                 );
               },
             ),
+            const SpaceHeight(10),
+            InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) {
+                    return const ForgotPasswordScreen();
+                  }),
+                );
+              },
+              child: const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 25.0),
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: Text(
+                    "Lupa Kata Sandi?",
+                    style: TextStyle(
+                      color: AppColors.black,
+                    ),
+                  ),
+                ),
+              ),
+            ),
             const SpaceHeight(54.0),
             BlocConsumer<AuthBloc, AuthState>(
               listener: (context, state) {
@@ -120,8 +144,10 @@ class _LoginScreenViewState extends State<LoginScreenView> {
                     maskType: EasyLoadingMaskType.black,
                   );
                 } else if (state.status == AuthStatus.success) {
+                  final message = state.dataLogin?.message ?? "Berhasil Login";
+
                   EasyLoading.dismiss();
-                  EasyLoading.showSuccess("Berhasil Login");
+                  EasyLoading.showSuccess(message);
 
                   Navigator.pushAndRemoveUntil(
                     context,

@@ -8,12 +8,12 @@ import '../../../core/components/spaces.dart';
 import '../../../core/constants/colors.dart';
 import '../../../data/datasources/auth_local_datasource.dart';
 import '../../../data/datasources/auth_remote_datasource.dart';
-import '../../../data/models/request/register_request_body_model.dart';
+import '../../../data/models/request/forgot_password_request_body_model.dart';
 import '../bloc/auth_bloc.dart';
 import 'login_screen.dart';
 
-class RegisterScreen extends StatelessWidget {
-  const RegisterScreen({super.key});
+class ForgotPasswordScreen extends StatelessWidget {
+  const ForgotPasswordScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -22,28 +22,27 @@ class RegisterScreen extends StatelessWidget {
         authLocalDatasource: AuthLocalDatasource(),
         authRemoteDatasource: AuthRemoteDatasource(),
       ),
-      child: const RegisterScreenView(),
+      child: const ForgotPasswordScreenView(),
     );
   }
 }
 
-class RegisterScreenView extends StatefulWidget {
-  const RegisterScreenView({super.key});
+class ForgotPasswordScreenView extends StatefulWidget {
+  const ForgotPasswordScreenView({super.key});
 
   @override
-  State<RegisterScreenView> createState() => _RegisterScreenViewState();
+  State<ForgotPasswordScreenView> createState() =>
+      _ForgotPasswordScreenViewState();
 }
 
-class _RegisterScreenViewState extends State<RegisterScreenView> {
-  final nameController = TextEditingController();
+class _ForgotPasswordScreenViewState extends State<ForgotPasswordScreenView> {
   final emailController = TextEditingController();
-  final passwordController = TextEditingController();
+  final newPasswordController = TextEditingController();
 
   @override
   void dispose() {
     emailController.dispose();
-    passwordController.dispose();
-    nameController.dispose();
+    newPasswordController.dispose();
     super.dispose();
   }
 
@@ -54,7 +53,7 @@ class _RegisterScreenViewState extends State<RegisterScreenView> {
         backgroundColor: AppColors.white,
         elevation: 0,
         title: const Text(
-          "Registrasi Akun",
+          "Lupa kata sandi",
           style: TextStyle(
             color: AppColors.black,
             fontWeight: FontWeight.bold,
@@ -76,7 +75,7 @@ class _RegisterScreenViewState extends State<RegisterScreenView> {
         children: [
           const SpaceHeight(20.0),
           const Text(
-            "Silahkan registrasi untuk membuat akun baru anda.",
+            "Silahkan masukkan email dan kata sandi baru anda untuk mereset kata sandi",
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 16,
@@ -84,11 +83,6 @@ class _RegisterScreenViewState extends State<RegisterScreenView> {
             ),
           ),
           const SpaceHeight(40.0),
-          CustomTextField(
-            controller: nameController,
-            label: "Nama Lengkap",
-          ),
-          const SpaceHeight(20.0),
           CustomTextField(
             controller: emailController,
             label: "Email",
@@ -100,8 +94,8 @@ class _RegisterScreenViewState extends State<RegisterScreenView> {
               final showPassword = state.showPassword;
 
               return CustomTextField(
-                controller: passwordController,
-                label: "Kata Sandi",
+                controller: newPasswordController,
+                label: "Kata Sandi Baru",
                 obscureText: showPassword!,
                 suffixIcon: IconButton(
                   icon: Icon(
@@ -128,8 +122,11 @@ class _RegisterScreenViewState extends State<RegisterScreenView> {
                   maskType: EasyLoadingMaskType.black,
                 );
               } else if (state.status == AuthStatus.success) {
+                final message =
+                    state.success?.message ?? "Berhasil Reset Kata Sandi";
+
                 EasyLoading.dismiss();
-                EasyLoading.showSuccess("Berhasil Registrasi");
+                EasyLoading.showSuccess(message);
 
                 Navigator.pushAndRemoveUntil(
                   context,
@@ -146,18 +143,17 @@ class _RegisterScreenViewState extends State<RegisterScreenView> {
             },
             builder: (context, state) {
               return ButtonPrimary(
-                titleButton: "Buat Akun",
+                titleButton: "Reset Kata Sandi",
                 width: double.infinity,
                 onPressed: () {
-                  final body = RegisterRequestBodyModel(
+                  final body = ForgotPasswordRequestBodyModel(
                     email: emailController.text,
-                    password: passwordController.text,
-                    name: nameController.text,
+                    newPassword: newPasswordController.text,
                   );
 
                   context.read<AuthBloc>().add(
-                        UserRegister(
-                          bodyRequestRegister: body,
+                        UserForgotPassword(
+                          body: body,
                         ),
                       );
                 },
@@ -165,24 +161,6 @@ class _RegisterScreenViewState extends State<RegisterScreenView> {
             },
           ),
           const SpaceHeight(20.0),
-          InkWell(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) {
-                  return const LoginScreen();
-                }),
-              );
-            },
-            child: const Text(
-              "Sudah mempunyai akun? Login disini.",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: AppColors.black,
-              ),
-            ),
-          ),
-          const SizedBox(height: 60),
         ],
       ),
     );

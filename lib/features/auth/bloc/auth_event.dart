@@ -43,6 +43,17 @@ class UserRegister extends AuthEvent {
   List<Object> get props => [bodyRequestRegister];
 }
 
+class UserForgotPassword extends AuthEvent {
+  final ForgotPasswordRequestBodyModel body;
+
+  const UserForgotPassword({
+    required this.body,
+  });
+
+  @override
+  List<Object> get props => [body];
+}
+
 class GetUserLogin extends AuthEvent {}
 
 class UserLogout extends AuthEvent {}
